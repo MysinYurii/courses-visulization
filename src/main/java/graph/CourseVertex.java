@@ -1,5 +1,6 @@
 package graph;
 
+import com.google.common.base.Objects;
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.hierarchical.JGraphHierarchicalLayout;
 import com.mxgraph.model.mxICell;
@@ -17,10 +18,9 @@ import java.awt.*;
  */
 public class CourseVertex {
     private final String courseName;
-    private final String selectedColor = mxUtils.getHexColorString(new Color(48, 255, 132));
-    private final String defaultColor = mxUtils.getHexColorString(new Color(255, 255, 255));
+    private static final String selectedColor = mxUtils.getHexColorString(new Color(48, 255, 132));
+    private static final String defaultColor = mxUtils.getHexColorString(new Color(255, 255, 255));
     private boolean isChoosen;
-    private mxICell graphCell;
 
     public CourseVertex(String courseName) {
         this.courseName = courseName;
@@ -33,6 +33,19 @@ public class CourseVertex {
 
     public void switchChoise() {
         isChoosen = !isChoosen;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CourseVertex that = (CourseVertex) o;
+        return Objects.equal(courseName, that.courseName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(courseName);
     }
 
     public void setIsChoosen(boolean isChoosen) {
@@ -52,11 +65,4 @@ public class CourseVertex {
         return courseName;
     }
 
-    public void setGraphCell(mxICell graphCell) {
-        this.graphCell = graphCell;
-    }
-
-    public mxICell getGraphCell() {
-        return graphCell;
-    }
 }

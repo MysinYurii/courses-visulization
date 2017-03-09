@@ -22,11 +22,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="GraphVisualizer" />
+        <module name="graph-visualizer" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="GraphVisualizer" target="1.8" />
+      <module name="graph-visualizer" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

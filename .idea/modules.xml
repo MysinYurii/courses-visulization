@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GraphVisualizer.iml" filepath="$PROJECT_DIR$/GraphVisualizer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graph-visualizer.iml" filepath="$PROJECT_DIR$/graph-visualizer.iml" />
     </modules>
   </component>
 </project>
