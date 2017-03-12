@@ -56,18 +56,18 @@ public class FileGraphProviderImpl implements GraphProvider {
                 result.addVertex(newCourseVertex);
             } else if (edgesDescriptionFormat.matcher(fileLine).matches()) {
                 Pair<Integer, List<Integer>> edgesAddition = parseEdgesAdditionLine(fileLine);
-                Integer fromId = edgesAddition.getKey();
-                List<Integer> toIds = edgesAddition.getValue();
-                edgesDesriptions.computeIfAbsent(fromId, key -> Sets.newHashSet()).addAll(toIds);
+                Integer toId = edgesAddition.getKey();
+                List<Integer> fromIds = edgesAddition.getValue();
+                edgesDesriptions.computeIfAbsent(toId, key -> Sets.newHashSet()).addAll(fromIds);
             }
         }
         for (HashMap.Entry<Integer, Set<Integer>> entry : edgesDesriptions.entrySet()) {
-            CourseVertex fromVertex = vertexDesriptions.get(entry.getKey());
-            if (fromVertex != null) {
+            CourseVertex toVertext = vertexDesriptions.get(entry.getKey());
+            if (toVertext != null) {
                 for (Integer toId : entry.getValue()) {
-                    CourseVertex toVertex = vertexDesriptions.get(toId);
-                    if (toVertex != null) {
-                        result.addEdge(fromVertex, toVertex, new CourseEdge(fromVertex, toVertex));
+                    CourseVertex fromVertex = vertexDesriptions.get(toId);
+                    if (fromVertex != null) {
+                        result.addEdge(fromVertex, toVertext, new CourseEdge(fromVertex, toVertext));
                     } else {
                         throw new VertexIdUndefinedException(toId);
                     }

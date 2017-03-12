@@ -1,6 +1,5 @@
 package graph;
 
-import com.google.common.collect.ImmutableSet;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
@@ -8,7 +7,6 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
-import exceptions.VertexDuplicationException;
 import org.jgrapht.DirectedGraph;
 
 import javax.swing.*;
@@ -26,11 +24,9 @@ import java.util.stream.Collectors;
 public class MainWindow extends JFrame {
 
     private static final int VERTEX_WIDTH = 200;
-    private static final int VERTEX_HEIGHT = 60;
+    private static final int VERTEX_HEIGHT = 20;
     private static final String STYLE_NAME = "MyStyle";
-    private static final String RESOURCE_PREFIX = "src/main/resources";
 
-    private final Map<String, CourseVertex> courseVerticesByCourseName = new HashMap<>();
     private final Map<CourseVertex, mxCell> mxCellsByCourseVertices = new HashMap<>();
     private DirectedGraph<CourseVertex, CourseEdge> rawGraph;
     private mxGraph graph = new mxGraph();
@@ -39,13 +35,7 @@ public class MainWindow extends JFrame {
     public MainWindow() throws IOException {
         initStyle();
         initGraph();
-        // define layout
-        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-        layout.setFineTuning(false);
-        layout.setUseBoundingBox(true);
-        layout.setOrientation(SwingConstants.WEST);
-
-        layout.execute(graph.getDefaultParent());
+        initLayout();
 
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
         graphComponent.setEnabled(false);
@@ -53,89 +43,13 @@ public class MainWindow extends JFrame {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    onClick(e, graphComponent);
+                    onLeftClick(e, graphComponent);
                 }
             }
         });
-        graphComponent.setSize(new Dimension(1000, 1000));
+        graphComponent.setSize(new Dimension(750, 750));
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(graphComponent, BorderLayout.CENTER);
-    }
-
-    private void selectAllParents(CourseVertex vertex) {
-        Queue<CourseVertex> disselectedChilds = new LinkedList<>();
-        disselectedChilds.add(vertex);
-        while (!disselectedChilds.isEmpty()) {
-            CourseVertex updatedVertex = disselectedChilds.remove();
-            updatedVertex.setIsChoosen(true);
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, updatedVertex.getColor(),
-                    new Object[]{mxCellsByCourseVertices.get(updatedVertex)});
-            Set<CourseVertex> incomingVertices = rawGraph.incomingEdgesOf(updatedVertex).stream()
-                    .map(CourseEdge::getFrom)
-                    .filter(v -> !v.isChoosen())
-                    .collect(Collectors.toSet());
-            disselectedChilds.addAll(incomingVertices);
-        }
-    }
-
-    private void onClick(MouseEvent e, mxGraphComponent graphComponent) {
-        Object target = graphComponent.getCellAt(e.getX(), e.getY());
-        if (target instanceof mxCell) {
-            mxCell cell = (mxCell) target;
-            Object clickedObject = cell.getValue();
-            if (clickedObject instanceof CourseVertex) {
-                CourseVertex clickedVertex = (CourseVertex) clickedObject;
-                clickedVertex.switchChoise();
-                if (clickedVertex.isChoosen()) {
-                    selectAllParents(clickedVertex);
-                } else {
-                    disselectAllChilds(clickedVertex);
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        MainWindow frame;
-        try {
-            frame = new MainWindow();
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(2000, 2000);
-            frame.setVisible(true);
-        } catch (Exception e) {
-            showErrorMessage(e.toString());
-            System.exit(-1);
-        }
-    }
-
-    private void insertVertex(CourseVertex courseVertex) {
-        courseVerticesByCourseName.put(courseVertex.getCourseName(), courseVertex);
-        mxCell cell = (mxCell) graph.insertVertex(graph.getDefaultParent(), null, courseVertex,
-                0, 0, VERTEX_WIDTH, VERTEX_HEIGHT, STYLE_NAME);
-        mxCellsByCourseVertices.put(courseVertex, cell);
-    }
-
-    private void insertEdge(CourseEdge edge) {
-        CourseVertex vertexFrom = edge.getFrom();
-        CourseVertex vertexTo = edge.getTo();
-        graph.insertEdge(graph.getDefaultParent(), null, "",
-                mxCellsByCourseVertices.get(vertexFrom), mxCellsByCourseVertices.get(vertexTo));
-    }
-
-    private void disselectAllChilds(CourseVertex vertex) {
-        Queue<CourseVertex> disselectedChilds = new LinkedList<>();
-        disselectedChilds.add(vertex);
-        while (!disselectedChilds.isEmpty()) {
-            CourseVertex updatedVertex = disselectedChilds.remove();
-            updatedVertex.setIsChoosen(false);
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, updatedVertex.getColor(),
-                    new Object[]{mxCellsByCourseVertices.get(updatedVertex)});
-            Set<CourseVertex> childVertices = rawGraph.outgoingEdgesOf(updatedVertex).stream()
-                    .map(CourseEdge::getTo)
-                    .filter((edge) -> edge.isChoosen())
-                    .collect(Collectors.toSet());
-            disselectedChilds.addAll(childVertices);
-        }
     }
 
     private void initStyle() {
@@ -155,7 +69,7 @@ public class MainWindow extends JFrame {
     }
 
     private void initGraph() throws IOException {
-        GraphProvider graphProvider = new FileGraphProviderImpl(RESOURCE_PREFIX + "/courseGraph");
+        GraphProvider graphProvider = new FileGraphProviderImpl("courseGraph");
         rawGraph = graphProvider.getGraph();
 
         graph.getModel().beginUpdate();
@@ -166,14 +80,71 @@ public class MainWindow extends JFrame {
             for (CourseEdge edge : rawGraph.edgeSet()) {
                 insertEdge(edge);
             }
-
         } finally {
             graph.getModel().endUpdate();
         }
     }
 
-    private static void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(new JFrame(), message, "Ошибка", JOptionPane.ERROR_MESSAGE);
+    private void initLayout() {
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+        layout.setUseBoundingBox(true);
+        layout.setInterHierarchySpacing(15.0);
+        layout.setIntraCellSpacing(15.0);
+        layout.setInterRankCellSpacing(150.0);
+        layout.setOrientation(SwingConstants.WEST);
+        layout.execute(graph.getDefaultParent());
+    }
+
+    private void onLeftClick(MouseEvent e, mxGraphComponent graphComponent) {
+        Optional<CourseVertex> target = Utils.getCourseVertexFromEvent(e, graphComponent);
+        if (target.isPresent()) {
+            CourseVertex clickedVertex = target.get();
+            clickedVertex.switchChoise();
+            if (clickedVertex.isChoosen()) {
+                selectAllParents(clickedVertex);
+            } else {
+                disselectAllChilds(clickedVertex);
+            }
+        }
+    }
+
+    private void insertVertex(CourseVertex courseVertex) {
+        mxCell cell = (mxCell) graph.insertVertex(graph.getDefaultParent(), null, courseVertex,
+                0, 0, VERTEX_WIDTH, VERTEX_HEIGHT, STYLE_NAME);
+        mxCellsByCourseVertices.put(courseVertex, cell);
+    }
+
+    private void insertEdge(CourseEdge edge) {
+        CourseVertex vertexFrom = edge.getFrom();
+        CourseVertex vertexTo = edge.getTo();
+        graph.insertEdge(graph.getDefaultParent(), null, "",
+                mxCellsByCourseVertices.get(vertexFrom), mxCellsByCourseVertices.get(vertexTo));
+    }
+
+    private void disselectAllChilds(CourseVertex vertex) {
+        updateGraph(vertex, true, false);
+    }
+
+    private void selectAllParents(CourseVertex vertex) {
+        updateGraph(vertex, false, true);
+    }
+
+    private void updateGraph(CourseVertex root, boolean workWithChilds, boolean desiredValue) {
+        Queue<CourseVertex> disselectedChilds = new LinkedList<>();
+        disselectedChilds.add(root);
+        while (!disselectedChilds.isEmpty()) {
+            CourseVertex updatedVertex = disselectedChilds.remove();
+            updatedVertex.setIsChoosen(desiredValue);
+            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, updatedVertex.getColor(),
+                    new Object[]{mxCellsByCourseVertices.get(updatedVertex)});
+            Set<CourseEdge> firedEdges = workWithChilds ? rawGraph.outgoingEdgesOf(updatedVertex)
+                    : rawGraph.incomingEdgesOf(updatedVertex);
+            Set<CourseVertex> incomingVertices = firedEdges.stream()
+                    .map(edge -> edge.getFrom().equals(updatedVertex) ? edge.getTo() : edge.getFrom())
+                    .filter(v -> v.isChoosen() == !desiredValue)
+                    .collect(Collectors.toSet());
+            disselectedChilds.addAll(incomingVertices);
+        }
     }
 
 }
