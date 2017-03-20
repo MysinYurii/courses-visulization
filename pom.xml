@@ -57,7 +57,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>graph.Main</mainClass>
+                            <mainClass>graph.main.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

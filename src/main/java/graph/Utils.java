@@ -3,15 +3,24 @@ package graph;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxUtils;
+import graph.model.CourseEdge;
+import graph.model.CourseVertex;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Yury on 11.03.2017.
  */
 public class Utils {
+
+    private static final String selectedColor = mxUtils.getHexColorString(new Color(48, 255, 132));
+    private static final String defaultColor = mxUtils.getHexColorString(new Color(255, 255, 255));
 
     public static Optional<CourseVertex> getCourseVertexFromEvent(MouseEvent event, mxGraphComponent graphComponent) {
         Object target = graphComponent.getCellAt(event.getX(), event.getY());
@@ -27,5 +36,12 @@ public class Utils {
 
     public static void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(new JFrame(), message, "Ошибка", JOptionPane.ERROR_MESSAGE);
+        System.exit(-1);
     }
+
+    public static String getMxColorOfVertex(CourseVertex vertex) {
+        if (vertex == null) return null;
+        return vertex.isChoosen() ? selectedColor : defaultColor;
+    }
+
 }

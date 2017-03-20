@@ -1,5 +1,6 @@
 package graph;
 
+import exceptions.CycleFoundException;
 import exceptions.VertexDuplicationException;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class FileGraphProviderImplTest {
         System.out.println(graphProvider.getGraph());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CycleFoundException.class)
     public void itShouldFailIfGraphHasCycle() throws IOException {
         FileGraphProviderImpl graphProvider = new FileGraphProviderImpl(RESOURCE_PREFIX + "cyclicGraph");
         System.out.println(graphProvider.getGraph());

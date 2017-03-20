@@ -2,8 +2,11 @@ package graph;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import exceptions.CycleFoundException;
 import exceptions.VertexDuplicationException;
 import exceptions.VertexIdUndefinedException;
+import graph.model.CourseEdge;
+import graph.model.CourseVertex;
 import javafx.util.Pair;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
@@ -24,22 +27,22 @@ import java.util.stream.Collectors;
  */
 public class FileGraphProviderImpl implements GraphProvider {
 
-    private final DirectedGraph<CourseVertex, CourseEdge> courseGraph;
+    private final String filename;
     private static final Pattern vertexDescriptionFormat = Pattern.compile("(\\d)+:[^:]*");
     private static final Pattern edgesDescriptionFormat = Pattern.compile("(\\d)+-(\\d)+(,(\\d)+)*");
 
 
-    public FileGraphProviderImpl(String fileName) throws IOException {
-        courseGraph = getGraphFromFile(fileName);
+    public FileGraphProviderImpl(String filename) {
+        this.filename = filename;
     }
 
     @Override
-    public DirectedGraph<CourseVertex, CourseEdge> getGraph() {
-        return courseGraph;
+    public DirectedAcyclicGraph<CourseVertex, CourseEdge> getGraph() throws IOException {
+        return getGraphFromFile(filename);
     }
 
-    private DirectedGraph<CourseVertex, CourseEdge> getGraphFromFile(String fileName) throws IOException {
-        DirectedGraph<CourseVertex, CourseEdge> result = new DirectedAcyclicGraph<>(new ClassBasedEdgeFactory<>(CourseEdge.class));
+    private DirectedAcyclicGraph<CourseVertex, CourseEdge> getGraphFromFile(String fileName) throws IOException {
+        DirectedAcyclicGraph<CourseVertex, CourseEdge> result = new DirectedAcyclicGraph<>(new ClassBasedEdgeFactory<>(CourseEdge.class));
         List<String> fileLines = Files.readAllLines(Paths.get(fileName));
         Map<Integer, CourseVertex> vertexDesriptions = new HashMap<>();
         Map<Integer, Set<Integer>> edgesDesriptions = new HashMap<>();
@@ -62,12 +65,18 @@ public class FileGraphProviderImpl implements GraphProvider {
             }
         }
         for (HashMap.Entry<Integer, Set<Integer>> entry : edgesDesriptions.entrySet()) {
-            CourseVertex toVertext = vertexDesriptions.get(entry.getKey());
-            if (toVertext != null) {
+            CourseVertex toVertex = vertexDesriptions.get(entry.getKey());
+            if (toVertex != null) {
                 for (Integer toId : entry.getValue()) {
                     CourseVertex fromVertex = vertexDesriptions.get(toId);
                     if (fromVertex != null) {
-                        result.addEdge(fromVertex, toVertext, new CourseEdge(fromVertex, toVertext));
+                        try {
+                            result.addEdge(fromVertex, toVertex, new CourseEdge(fromVertex, toVertex));
+                        } catch (IllegalArgumentException e) {
+                            if (e.getCause() instanceof DirectedAcyclicGraph.CycleFoundException) {
+                                throw new CycleFoundException(fromVertex, toVertex);
+                            }
+                        }
                     } else {
                         throw new VertexIdUndefinedException(toId);
                     }

@@ -1,4 +1,6 @@
-package graph;
+package graph.main;
+
+import graph.Utils;
 
 import javax.swing.*;
 

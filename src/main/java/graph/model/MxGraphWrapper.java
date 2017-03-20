@@ -1,5 +1,6 @@
-package graph;
+package graph.model;
 
+import com.google.common.base.Preconditions;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
@@ -7,49 +8,39 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
+import graph.Utils;
 import org.jgrapht.DirectedGraph;
+import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.*;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
 /**
- * Created by Yury on 05.12.2016.
+ * Created by Yury on 21.03.2017.
  */
-public class MainWindow extends JFrame {
+public class MxGraphWrapper {
 
     private static final int VERTEX_WIDTH = 200;
     private static final int VERTEX_HEIGHT = 20;
-    private static final String STYLE_NAME = "MyStyle";
 
+    private static final String STYLE_NAME = "MyStyle";
     private final Map<CourseVertex, mxCell> mxCellsByCourseVertices = new HashMap<>();
     private DirectedGraph<CourseVertex, CourseEdge> rawGraph;
     private mxGraph graph = new mxGraph();
 
-
-    public MainWindow() throws IOException {
+    public MxGraphWrapper(DirectedAcyclicGraph<CourseVertex, CourseEdge> rawGraph) {
+        Preconditions.checkNotNull(rawGraph);
+        this.rawGraph = rawGraph;
         initStyle();
         initGraph();
         initLayout();
+    }
 
-        mxGraphComponent graphComponent = new mxGraphComponent(graph);
-        graphComponent.setEnabled(false);
-        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    onLeftClick(e, graphComponent);
-                }
-            }
-        });
-        graphComponent.setSize(new Dimension(750, 750));
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(graphComponent, BorderLayout.CENTER);
+    public mxGraphComponent getGraphComponent() {
+        return new mxGraphComponent(graph);
     }
 
     private void initStyle() {
@@ -68,9 +59,7 @@ public class MainWindow extends JFrame {
         graph.setStylesheet(stylesheet);
     }
 
-    private void initGraph() throws IOException {
-        GraphProvider graphProvider = new FileGraphProviderImpl("courseGraph");
-        rawGraph = graphProvider.getGraph();
+    private void initGraph() {
 
         graph.getModel().beginUpdate();
         try {
@@ -80,6 +69,8 @@ public class MainWindow extends JFrame {
             for (CourseEdge edge : rawGraph.edgeSet()) {
                 insertEdge(edge);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             graph.getModel().endUpdate();
         }
@@ -95,19 +86,6 @@ public class MainWindow extends JFrame {
         layout.execute(graph.getDefaultParent());
     }
 
-    private void onLeftClick(MouseEvent e, mxGraphComponent graphComponent) {
-        Optional<CourseVertex> target = Utils.getCourseVertexFromEvent(e, graphComponent);
-        if (target.isPresent()) {
-            CourseVertex clickedVertex = target.get();
-            clickedVertex.switchChoise();
-            if (clickedVertex.isChoosen()) {
-                selectAllParents(clickedVertex);
-            } else {
-                disselectAllChilds(clickedVertex);
-            }
-        }
-    }
-
     private void insertVertex(CourseVertex courseVertex) {
         mxCell cell = (mxCell) graph.insertVertex(graph.getDefaultParent(), null, courseVertex,
                 0, 0, VERTEX_WIDTH, VERTEX_HEIGHT, STYLE_NAME);
@@ -121,11 +99,11 @@ public class MainWindow extends JFrame {
                 mxCellsByCourseVertices.get(vertexFrom), mxCellsByCourseVertices.get(vertexTo));
     }
 
-    private void disselectAllChilds(CourseVertex vertex) {
+    public void disselectAllChilds(CourseVertex vertex) {
         updateGraph(vertex, true, false);
     }
 
-    private void selectAllParents(CourseVertex vertex) {
+    public void selectAllParents(CourseVertex vertex) {
         updateGraph(vertex, false, true);
     }
 
@@ -135,7 +113,7 @@ public class MainWindow extends JFrame {
         while (!disselectedChilds.isEmpty()) {
             CourseVertex updatedVertex = disselectedChilds.remove();
             updatedVertex.setIsChoosen(desiredValue);
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, updatedVertex.getColor(),
+            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Utils.getMxColorOfVertex(updatedVertex),
                     new Object[]{mxCellsByCourseVertices.get(updatedVertex)});
             Set<CourseEdge> firedEdges = workWithChilds ? rawGraph.outgoingEdgesOf(updatedVertex)
                     : rawGraph.incomingEdgesOf(updatedVertex);
@@ -146,5 +124,4 @@ public class MainWindow extends JFrame {
             disselectedChilds.addAll(incomingVertices);
         }
     }
-
 }
