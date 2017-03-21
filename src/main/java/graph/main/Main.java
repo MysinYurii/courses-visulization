@@ -18,7 +18,7 @@ public class Main {
             frame.setSize(1500, 1500);
             frame.setVisible(true);
         } catch (Exception e) {
-            Utils.showErrorMessage(e.toString());
+            Utils.showErrorMessageAndExit(e.toString());
             System.exit(-1);
         }
     }

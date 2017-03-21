@@ -34,9 +34,13 @@ public class Utils {
         return Optional.ofNullable(resultVertex);
     }
 
+    public static void showErrorMessageAndExit(String message) {
+        showErrorMessage(message);
+        System.exit(-1);
+    }
+
     public static void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(new JFrame(), message, "Ошибка", JOptionPane.ERROR_MESSAGE);
-        System.exit(-1);
     }
 
     public static String getMxColorOfVertex(CourseVertex vertex) {

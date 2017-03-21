@@ -1,12 +1,6 @@
 package graph.main;
 
-import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxConstants;
-import com.mxgraph.util.mxUtils;
-import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxStylesheet;
 import exceptions.CycleFoundException;
 import exceptions.VertexDuplicationException;
 import exceptions.VertexIdUndefinedException;
@@ -14,7 +8,6 @@ import graph.*;
 import graph.model.CourseEdge;
 import graph.model.CourseVertex;
 import graph.model.MxGraphWrapper;
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import javax.swing.*;
@@ -23,16 +16,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.List;
-import java.util.Queue;
-import java.util.stream.Collectors;
 
 /**
  * Created by Yury on 05.12.2016.
@@ -47,13 +36,13 @@ public class MainWindow extends JFrame {
         try {
             rawGraph = graphProvider.getGraph();
         } catch (IOException e) {
-            Utils.showErrorMessage("Файл с графом курсов не найден");
+            Utils.showErrorMessageAndExit("Файл с графом курсов не найден");
         } catch (VertexDuplicationException e) {
-            Utils.showErrorMessage("Дупликация вершины с id = " + e.getDuplicatedId());
+            Utils.showErrorMessageAndExit("Дупликация вершины с id = " + e.getDuplicatedId());
         } catch (VertexIdUndefinedException e) {
-            Utils.showErrorMessage("Не найдено вершины с id = " + e.getId());
+            Utils.showErrorMessageAndExit("Не найдено вершины с id = " + e.getId());
         } catch (CycleFoundException e) {
-            Utils.showErrorMessage("Ребро \"" + e.getFrom() + "\"->\"" + e.getTo() + "\" создает цикл");
+            Utils.showErrorMessageAndExit("Ребро \"" + e.getFrom() + "\"->\"" + e.getTo() + "\" создает цикл");
         }
         mxGraphWrapper = new MxGraphWrapper(rawGraph);
         mxGraphComponent graphComponent = mxGraphWrapper.getGraphComponent();
