@@ -79,6 +79,7 @@ public class MainWindow extends JFrame {
                 List<String> selectedCourses = mxGraphWrapper.getSelectedCourses();
                 try {
                     Files.write(Paths.get("selectedCourses.txt"), selectedCourses, StandardOpenOption.CREATE);
+                    Utils.showInfoMessage("Выбранные курсы успешно записаны в файл selectedCources.txt");
                 } catch (IOException e) {
                     Utils.showErrorMessage("Ошибка записи");
                 }

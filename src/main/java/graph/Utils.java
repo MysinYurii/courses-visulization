@@ -44,4 +44,7 @@ public class Utils {
         return vertex.isChoosen() ? selectedColor : defaultColor;
     }
 
+    public static void showInfoMessage(String info) {
+        JOptionPane.showMessageDialog(new JFrame(), info, "", JOptionPane.INFORMATION_MESSAGE);
+    }
 }
