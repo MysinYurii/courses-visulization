@@ -13,8 +13,10 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
@@ -28,7 +30,7 @@ public class MxGraphWrapper {
 
     private static final String STYLE_NAME = "MyStyle";
     private final Map<CourseVertex, mxCell> mxCellsByCourseVertices = new HashMap<>();
-    private DirectedGraph<CourseVertex, CourseEdge> rawGraph;
+    private DirectedAcyclicGraph<CourseVertex, CourseEdge> rawGraph;
     private mxGraph graph = new mxGraph();
 
     public MxGraphWrapper(DirectedAcyclicGraph<CourseVertex, CourseEdge> rawGraph) {
@@ -40,7 +42,16 @@ public class MxGraphWrapper {
     }
 
     public mxGraphComponent getGraphComponent() {
-        return new mxGraphComponent(graph);
+        mxGraphComponent graphComponent = new mxGraphComponent(graph);
+        graphComponent.setSize(1000, 1000);
+        return graphComponent;
+    }
+
+    public List<String> getSelectedCourses() {
+        return rawGraph.vertexSet().stream()
+                .filter(CourseVertex::isChoosen)
+                .map(CourseVertex::getCourseName)
+                .collect(Collectors.toList());
     }
 
     private void initStyle() {

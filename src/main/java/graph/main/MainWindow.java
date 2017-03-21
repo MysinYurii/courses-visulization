@@ -19,10 +19,18 @@ import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
@@ -59,8 +67,28 @@ public class MainWindow extends JFrame {
             }
         });
         graphComponent.setSize(new Dimension(750, 750));
+        graphComponent.setBorder(null);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(graphComponent, BorderLayout.CENTER);
+        JButton exportResutButton = new JButton("Экспортировать");
+        exportResutButton.setVisible(true);
+        exportResutButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                List<String> selectedCourses = mxGraphWrapper.getSelectedCourses();
+                try {
+                    Files.write(Paths.get("selectedCourses.txt"), selectedCourses, StandardOpenOption.CREATE);
+                } catch (IOException e) {
+                    Utils.showErrorMessage("Ошибка записи");
+                }
+            }
+        });
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout());
+        panel.add(exportResutButton);
+        getContentPane().setLayout(new FlowLayout(FlowLayout.LEADING));
+        getContentPane().add(panel);
     }
 
     private void onLeftClick(MouseEvent e, mxGraphComponent graphComponent) {
