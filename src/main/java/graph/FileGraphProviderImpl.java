@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class FileGraphProviderImpl implements GraphProvider {
 
     private final String filename;
-    private static final Pattern vertexDescriptionFormat = Pattern.compile("(\\d)+:[^:]*");
+    private static final Pattern vertexDescriptionFormat = Pattern.compile("(\\d)+;[^:]*;(\\d)");
     private static final Pattern edgesDescriptionFormat = Pattern.compile("(\\d)+-(\\d)+(,(\\d)+)*");
 
 
@@ -50,13 +50,12 @@ public class FileGraphProviderImpl implements GraphProvider {
             fileLine = fileLine.trim();
             String[] tokens = fileLine.split(":");
             if (vertexDescriptionFormat.matcher(fileLine).matches()) {
-                Pair<Integer, String> vertexAddition = parseVertexAdditionLine(fileLine);
+                Pair<Integer, CourseVertex> vertexAddition = parseVertexAdditionLine(fileLine);
                 Integer id = vertexAddition.getKey();
-                CourseVertex newCourseVertex = new CourseVertex(vertexAddition.getValue());
-                if (vertexDesriptions.putIfAbsent(id, newCourseVertex) != null) {
+                if (vertexDesriptions.putIfAbsent(id, vertexAddition.getValue()) != null) {
                     throw new VertexDuplicationException(id);
                 }
-                result.addVertex(newCourseVertex);
+                result.addVertex(vertexAddition.getValue());
             } else if (edgesDescriptionFormat.matcher(fileLine).matches()) {
                 Pair<Integer, List<Integer>> edgesAddition = parseEdgesAdditionLine(fileLine);
                 Integer toId = edgesAddition.getKey();
@@ -88,10 +87,10 @@ public class FileGraphProviderImpl implements GraphProvider {
         return result;
     }
 
-    private Pair<Integer, String> parseVertexAdditionLine(String line) {
-        String[] tokens = line.split(":");
+    private Pair<Integer, CourseVertex> parseVertexAdditionLine(String line) {
+        String[] tokens = line.split(";");
         Integer id = Integer.valueOf(tokens[0]);
-        return new Pair<>(id, tokens[1]);
+        return new Pair<>(id, new CourseVertex(tokens[1], 5 - Integer.valueOf(tokens[2])));
     }
 
     private Pair<Integer, List<Integer>> parseEdgesAdditionLine(String line) {

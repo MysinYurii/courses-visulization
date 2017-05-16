@@ -8,9 +8,11 @@ import com.google.common.base.Objects;
 public class CourseVertex {
     private final String courseName;
     private boolean isChoosen;
+    private int courseLevel = 0;
 
-    public CourseVertex(String courseName) {
+    public CourseVertex(String courseName, int courseLevel) {
         this.courseName = courseName;
+        this.courseLevel = courseLevel;
         isChoosen = false;
     }
 
@@ -41,6 +43,10 @@ public class CourseVertex {
 
     public String getCourseName() {
         return courseName;
+    }
+
+    public int getCourseLevel() {
+        return courseLevel;
     }
 
     @Override

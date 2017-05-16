@@ -1,7 +1,10 @@
 package graph.model;
 
 import com.google.common.base.Preconditions;
+import com.mxgraph.layout.hierarchical.model.mxGraphHierarchyModel;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.mxGraphLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
@@ -9,11 +12,9 @@ import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import graph.Utils;
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -88,11 +89,11 @@ public class MxGraphWrapper {
     }
 
     private void initLayout() {
-        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+        MxHierarchicalLayoutExtention layout = new MxHierarchicalLayoutExtention(graph);
         layout.setUseBoundingBox(true);
         layout.setInterHierarchySpacing(15.0);
         layout.setIntraCellSpacing(15.0);
-        layout.setInterRankCellSpacing(150.0);
+        layout.setInterRankCellSpacing(100);
         layout.setOrientation(SwingConstants.WEST);
         layout.execute(graph.getDefaultParent());
     }
