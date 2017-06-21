@@ -9,15 +9,12 @@ import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import graph.Utils;
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.Queue;
 import java.util.stream.Collectors;
 
 /**
@@ -31,11 +28,13 @@ public class MxGraphWrapper {
     private static final String STYLE_NAME = "MyStyle";
     private final Map<CourseVertex, mxCell> mxCellsByCourseVertices = new HashMap<>();
     private DirectedAcyclicGraph<CourseVertex, CourseEdge> rawGraph;
+    private Stack<List<CourseVertex>> changesHistory;
     private mxGraph graph = new mxGraph();
 
     public MxGraphWrapper(DirectedAcyclicGraph<CourseVertex, CourseEdge> rawGraph) {
         Preconditions.checkNotNull(rawGraph);
         this.rawGraph = rawGraph;
+        this.changesHistory = new Stack<>();
         initStyle();
         initGraph();
         initLayout();
@@ -118,14 +117,29 @@ public class MxGraphWrapper {
         updateGraph(vertex, false, true);
     }
 
+    public void revertPreviousAction() {
+        if (!changesHistory.isEmpty()) {
+            List<CourseVertex> lastChange = changesHistory.pop();
+            for (CourseVertex changedVertex : lastChange) {
+                changedVertex.switchChoise();
+                repaintVertex(changedVertex);
+            }
+        }
+    }
+
     private void updateGraph(CourseVertex root, boolean workWithChilds, boolean desiredValue) {
         Queue<CourseVertex> disselectedChilds = new LinkedList<>();
+        List<CourseVertex> changedVertices = new ArrayList<>();
+        root.switchChoise();
+        changedVertices.add(root);
         disselectedChilds.add(root);
         while (!disselectedChilds.isEmpty()) {
             CourseVertex updatedVertex = disselectedChilds.remove();
-            updatedVertex.setIsChoosen(desiredValue);
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Utils.getMxColorOfVertex(updatedVertex),
-                    new Object[]{mxCellsByCourseVertices.get(updatedVertex)});
+            if (updatedVertex.isChoosen() != desiredValue) {
+                changedVertices.add(updatedVertex);
+                updatedVertex.setIsChoosen(desiredValue);
+            }
+            repaintVertex(updatedVertex);
             Set<CourseEdge> firedEdges = workWithChilds ? rawGraph.outgoingEdgesOf(updatedVertex)
                     : rawGraph.incomingEdgesOf(updatedVertex);
             Set<CourseVertex> incomingVertices = firedEdges.stream()
@@ -134,5 +148,13 @@ public class MxGraphWrapper {
                     .collect(Collectors.toSet());
             disselectedChilds.addAll(incomingVertices);
         }
+        if (!changedVertices.isEmpty()) {
+            changesHistory.push(changedVertices);
+        }
+    }
+
+    private void repaintVertex(CourseVertex repaintedVertex) {
+        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Utils.getMxColorOfVertex(repaintedVertex),
+                new Object[]{mxCellsByCourseVertices.get(repaintedVertex)});
     }
 }

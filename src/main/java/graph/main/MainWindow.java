@@ -12,16 +12,15 @@ import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.List;
+
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 
 /**
  * Created by Yury on 05.12.2016.
@@ -57,6 +56,14 @@ public class MainWindow extends JFrame {
         });
         graphComponent.setSize(new Dimension(750, 750));
         graphComponent.setBorder(null);
+        ((JComponent)getComponent(0)).getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_MASK),
+                "revertLastAction");
+        ((JComponent)getComponent(0)).getActionMap().put("revertLastAction", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mxGraphWrapper.revertPreviousAction();
+            }
+        });
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(graphComponent, BorderLayout.CENTER);
         JButton exportResutButton = new JButton("Экспортировать");
@@ -85,8 +92,7 @@ public class MainWindow extends JFrame {
         Optional<CourseVertex> target = Utils.getCourseVertexFromEvent(e, graphComponent);
         if (target.isPresent()) {
             CourseVertex clickedVertex = target.get();
-            clickedVertex.switchChoise();
-            if (clickedVertex.isChoosen()) {
+            if (!clickedVertex.isChoosen()) {
                 mxGraphWrapper.selectAllParents(clickedVertex);
             } else {
                 mxGraphWrapper.disselectAllChilds(clickedVertex);
