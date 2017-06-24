@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class FileGraphProviderImpl implements GraphProvider {
 
     private final String filename;
-    private static final Pattern vertexDescriptionFormat = Pattern.compile("(\\d)+:[^:]*");
+    private static final Pattern vertexDescriptionFormat = Pattern.compile("(\\d)+;[^:]*;(\\d)");
     private static final Pattern edgesDescriptionFormat = Pattern.compile("(\\d)+-(\\d)+(,(\\d)+)*");
 
 
@@ -48,7 +48,6 @@ public class FileGraphProviderImpl implements GraphProvider {
         Map<Integer, Set<Integer>> edgesDesriptions = new HashMap<>();
         for (String fileLine : fileLines) {
             fileLine = fileLine.trim();
-            String[] tokens = fileLine.split(":");
             if (vertexDescriptionFormat.matcher(fileLine).matches()) {
                 Pair<Integer, String> vertexAddition = parseVertexAdditionLine(fileLine);
                 Integer id = vertexAddition.getKey();
@@ -89,7 +88,7 @@ public class FileGraphProviderImpl implements GraphProvider {
     }
 
     private Pair<Integer, String> parseVertexAdditionLine(String line) {
-        String[] tokens = line.split(":");
+        String[] tokens = line.split(";");
         Integer id = Integer.valueOf(tokens[0]);
         return new Pair<>(id, tokens[1]);
     }

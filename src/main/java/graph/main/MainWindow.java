@@ -1,5 +1,6 @@
 package graph.main;
 
+import com.mxgraph.swing.handler.mxCellMarker;
 import com.mxgraph.swing.mxGraphComponent;
 import exceptions.CycleFoundException;
 import exceptions.VertexDuplicationException;
@@ -45,13 +46,30 @@ public class MainWindow extends JFrame {
         }
         mxGraphWrapper = new MxGraphWrapper(rawGraph);
         mxGraphComponent graphComponent = mxGraphWrapper.getGraphComponent();
-        graphComponent.setEnabled(false);
+        graphComponent.setEnabled(true);
+        graphComponent.setConnectable(false);
+        graphComponent.setWheelScrollingEnabled(true);
+        graphComponent.getGraphHandler().setMarkerEnabled(true);
+
+        graphComponent.getGraphControl().addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                onMove(e, graphComponent);
+            }
+        });
+
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+
             @Override
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     onLeftClick(e, graphComponent);
                 }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                onMove(e, graphComponent);
             }
         });
         graphComponent.setSize(new Dimension(750, 750));
@@ -68,17 +86,13 @@ public class MainWindow extends JFrame {
         getContentPane().add(graphComponent, BorderLayout.CENTER);
         JButton exportResutButton = new JButton("Экспортировать");
         exportResutButton.setVisible(true);
-        exportResutButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                List<String> selectedCourses = mxGraphWrapper.getSelectedCourses();
-                try {
-                    Files.write(Paths.get("selectedCourses.txt"), selectedCourses, StandardOpenOption.CREATE);
-                    Utils.showInfoMessage("Выбранные курсы успешно записаны в файл selectedCources.txt");
-                } catch (IOException e) {
-                    Utils.showErrorMessage("Ошибка записи");
-                }
+        exportResutButton.addActionListener(event -> {
+            List<String> selectedCourses = mxGraphWrapper.getSelectedCourses();
+            try {
+                Files.write(Paths.get("selectedCourses.txt"), selectedCourses, StandardOpenOption.CREATE);
+                Utils.showInfoMessage("Выбранные курсы успешно записаны в файл selectedCources.txt");
+            } catch (IOException e) {
+                Utils.showErrorMessage("Ошибка записи");
             }
         });
         JPanel panel = new JPanel();
@@ -90,13 +104,22 @@ public class MainWindow extends JFrame {
 
     private void onLeftClick(MouseEvent e, mxGraphComponent graphComponent) {
         Optional<CourseVertex> target = Utils.getCourseVertexFromEvent(e, graphComponent);
-        if (target.isPresent()) {
-            CourseVertex clickedVertex = target.get();
+        target.ifPresent(clickedVertex -> {
             if (!clickedVertex.isChoosen()) {
                 mxGraphWrapper.selectAllParents(clickedVertex);
             } else {
                 mxGraphWrapper.disselectAllChilds(clickedVertex);
             }
+        });
+    }
+
+    private void onMove(MouseEvent e, mxGraphComponent graphComponent) {
+        Optional<CourseVertex> target = Utils.getCourseVertexFromEvent(e, graphComponent);
+        if (target.isPresent() && !mxGraphWrapper.hasOpaqueVertices()) {
+            mxGraphWrapper.highlightAllChilds(target.get());
+        }
+        if (!target.isPresent() && mxGraphWrapper.hasOpaqueVertices()) {
+            mxGraphWrapper.removeOpaqueVertices();
         }
     }
 
