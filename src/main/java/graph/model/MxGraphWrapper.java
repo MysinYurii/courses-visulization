@@ -124,8 +124,7 @@ public class MxGraphWrapper {
         CourseVertex vertexFrom = edge.getFrom();
         CourseVertex vertexTo = edge.getTo();
         graph.insertEdge(graph.getDefaultParent(), null, "",
-                mxCellsByCourseVertices.get(vertexFrom), mxCellsByCourseVertices.get(vertexTo),
-                mxConstants.EDGESTYLE_ENTITY_RELATION);
+                mxCellsByCourseVertices.get(vertexFrom), mxCellsByCourseVertices.get(vertexTo));
     }
 
     public void disselectAllChilds(CourseVertex vertex) {

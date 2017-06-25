@@ -29,6 +29,7 @@ import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 public class MainWindow extends JFrame {
 
     private final MxGraphWrapper mxGraphWrapper;
+    private long lastActionMillis = -1;
 
     public MainWindow() throws IOException {
         GraphProvider graphProvider = new FileGraphProviderImpl("courseGraph");
@@ -116,7 +117,11 @@ public class MainWindow extends JFrame {
     private void onMove(MouseEvent e, mxGraphComponent graphComponent) {
         Optional<CourseVertex> target = Utils.getCourseVertexFromEvent(e, graphComponent);
         if (target.isPresent() && !mxGraphWrapper.hasOpaqueVertices()) {
-            mxGraphWrapper.highlightAllChilds(target.get());
+            long currentTime = System.currentTimeMillis();
+            if (lastActionMillis + 200 < currentTime) {
+                lastActionMillis = currentTime;
+                mxGraphWrapper.highlightAllChilds(target.get());
+            }
         }
         if (!target.isPresent() && mxGraphWrapper.hasOpaqueVertices()) {
             mxGraphWrapper.removeOpaqueVertices();
