@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ceee97a5-819e-4b2f-8577-973bd0624b92" name="Default" comment="Удалена директория .idea">
+    <list default="true" id="ceee97a5-819e-4b2f-8577-973bd0624b92" name="Default" comment="">
       <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterPath="" />
@@ -23,9 +23,6 @@
       <change type="DELETED" beforePath="$PROJECT_DIR$/GraphVisualizer.iml" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/graph-visualizer.iml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/graph/main/Main.java" afterPath="$PROJECT_DIR$/src/main/java/graph/main/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/graph/main/MainWindow.java" afterPath="$PROJECT_DIR$/src/main/java/graph/main/MainWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/graph/model/MxGraphWrapper.java" afterPath="$PROJECT_DIR$/src/main/java/graph/model/MxGraphWrapper.java" />
     </list>
     <ignored path="graph-visualizer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -56,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="15" column="6" lean-forward="true" selection-start-line="15" selection-start-column="6" selection-end-line="15" selection-end-column="6" />
+            <state relative-caret-position="273">
+              <caret line="13" column="8" lean-forward="true" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -76,17 +73,59 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="workspace.xml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="workspace.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="735">
-              <caret line="35" column="32" lean-forward="true" selection-start-line="35" selection-start-column="32" selection-end-line="35" selection-end-column="32" />
+            <state relative-caret-position="252">
+              <caret line="12" column="32" lean-forward="true" selection-start-line="12" selection-start-column="32" selection-end-line="12" selection-end-column="32" />
               <folding>
-                <element signature="e#11624#11628#0" expanded="true" />
-                <element signature="e#11634#11638#0" expanded="true" />
-                <element signature="e#11717#11721#0" expanded="true" />
-                <element signature="e#11727#11731#0" expanded="true" />
+                <marker date="1498933299942" expanded="true" signature="73470:73487" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73470:73505" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73470:73518" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73470:73533" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73568:75787" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73581:75772" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73635:73930" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73654:73915" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73717:73895" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73757:73861" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73778:73839" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73980:74307" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="73999:74292" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74094:74272" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74134:74238" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74155:74216" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74358:74623" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74377:74608" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74410:74588" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74450:74554" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74471:74532" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74666:74972" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74685:74957" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74759:74937" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74799:74903" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="74820:74881" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="75023:75381" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="75042:75366" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="75129:75346" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="75169:75312" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="75190:75290" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="75433:75758" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="75452:75743" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="75545:75723" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="75585:75689" ph="..." />
+                <marker date="1498933299942" expanded="true" signature="75606:75667" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".name" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.idea/.name">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="14" lean-forward="true" selection-start-line="0" selection-start-column="14" selection-end-line="0" selection-end-column="14" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -148,6 +187,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="PUSH_TAGS">
+      <GitPushTagMode />
+    </option>
   </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
@@ -189,8 +231,9 @@
         <option value="$PROJECT_DIR$/courseGraph" />
         <option value="$PROJECT_DIR$/src/main/java/graph/model/MxGraphWrapper.java" />
         <option value="$PROJECT_DIR$/src/main/java/graph/main/MainWindow.java" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/.idea/workspace.xml" />
+        <option value="$PROJECT_DIR$/.idea/.name" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -361,21 +404,22 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="last.edited.regexp" value="1;asdfasd;1&#10;" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
+    <property name="add_unversioned_files" value="$PROJECT_DIR$/.idea/.name" />
   </component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.RecentsKey">
       <recent name="graph" />
     </key>
-    <key name="CreateClassDialog.RecentsKey">
-      <recent name="graph" />
-    </key>
-    <key name="CreateTestDialog.Recents.Supers">
-      <recent name="" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Дн\Documents\GitHub\course-visualization\courses-visulization" />
       <recent name="C:\Users\Дн\Documents\GitHub\course-visualization\courses-visulization\.idea" />
       <recent name="C:\Users\Дн\Documents\GitHub\course-visualization\courses-visulization\src" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="graph" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -775,7 +819,14 @@
       <option name="project" value="LOCAL" />
       <updated>1498930853193</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Добавление диалога при выборе файла.">
+      <created>1498933122561</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1498933122561</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -859,7 +910,8 @@
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="Добавлена подсветка при наведении" />
     <MESSAGE value="Удалена директория .idea" />
-    <option name="LAST_COMMIT_MESSAGE" value="Удалена директория .idea" />
+    <MESSAGE value="Добавление диалога при выборе файла." />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавление диалога при выборе файла." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -907,13 +959,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/org/tinyjee/jgraphx/jgraphx/2.0.0.1/jgraphx-2.0.0.1-sources.jar!/com/mxgraph/util/mxEventSource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="176" column="44" lean-forward="false" selection-start-line="176" selection-start-column="38" selection-end-line="176" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/beans/PropertyChangeListener.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="202">
@@ -1115,6 +1160,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="234">
           <caret line="17" column="48" lean-forward="false" selection-start-line="17" selection-start-column="48" selection-end-line="17" selection-end-column="48" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1122,6 +1168,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-378">
           <caret line="79" column="40" lean-forward="false" selection-start-line="79" selection-start-column="40" selection-end-line="79" selection-end-column="40" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1129,6 +1176,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="218">
           <caret line="218" column="15" lean-forward="false" selection-start-line="218" selection-start-column="15" selection-end-line="218" selection-end-column="15" />
+          <folding>
+            <element signature="e#5070#5071#0" expanded="false" />
+            <element signature="e#5111#5112#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1136,6 +1187,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="349">
           <caret line="50" column="23" lean-forward="false" selection-start-line="50" selection-start-column="23" selection-end-line="50" selection-end-column="23" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1173,6 +1225,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="176">
           <caret line="83" column="44" lean-forward="false" selection-start-line="83" selection-start-column="44" selection-end-line="83" selection-end-column="44" />
+          <folding>
+            <element signature="e#2673#2674#0" expanded="false" />
+            <element signature="e#2741#2742#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1234,24 +1290,64 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="15" column="6" lean-forward="true" selection-start-line="15" selection-start-column="6" selection-end-line="15" selection-end-column="6" />
+        <state relative-caret-position="252">
+          <caret line="12" column="32" lean-forward="true" selection-start-line="12" selection-start-column="32" selection-end-line="12" selection-end-column="32" />
+          <folding>
+            <marker date="1498933299942" expanded="true" signature="73470:73487" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73470:73505" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73470:73518" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73470:73533" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73568:75787" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73581:75772" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73635:73930" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73654:73915" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73717:73895" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73757:73861" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73778:73839" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73980:74307" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="73999:74292" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74094:74272" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74134:74238" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74155:74216" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74358:74623" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74377:74608" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74410:74588" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74450:74554" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74471:74532" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74666:74972" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74685:74957" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74759:74937" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74799:74903" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="74820:74881" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="75023:75381" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="75042:75366" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="75129:75346" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="75169:75312" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="75190:75290" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="75433:75758" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="75452:75743" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="75545:75723" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="75585:75689" ph="..." />
+            <marker date="1498933299942" expanded="true" signature="75606:75667" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/.name">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="14" lean-forward="true" selection-start-line="0" selection-start-column="14" selection-end-line="0" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="735">
-          <caret line="35" column="32" lean-forward="true" selection-start-line="35" selection-start-column="32" selection-end-line="35" selection-end-column="32" />
-          <folding>
-            <element signature="e#11624#11628#0" expanded="true" />
-            <element signature="e#11634#11638#0" expanded="true" />
-            <element signature="e#11717#11721#0" expanded="true" />
-            <element signature="e#11727#11731#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="273">
+          <caret line="13" column="8" lean-forward="true" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="8" />
+          <folding />
         </state>
       </provider>
     </entry>
