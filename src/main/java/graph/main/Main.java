@@ -15,7 +15,7 @@ public class Main {
         try {
             frame = new MainWindow();
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            frame.setSize(1500, 1500);
+            frame.setSize(frame.getMaximumSize());
             frame.setVisible(true);
         } catch (Exception e) {
             Utils.showErrorMessageAndExit(e.toString());

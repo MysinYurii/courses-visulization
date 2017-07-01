@@ -1,6 +1,5 @@
 package graph.main;
 
-import com.mxgraph.swing.handler.mxCellMarker;
 import com.mxgraph.swing.mxGraphComponent;
 import exceptions.CycleFoundException;
 import exceptions.VertexDuplicationException;
@@ -28,6 +27,7 @@ import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
  */
 public class MainWindow extends JFrame {
 
+    private final FileDialog fileDialog;
     private final MxGraphWrapper mxGraphWrapper;
     private long lastActionMillis = -1;
 
@@ -45,20 +45,20 @@ public class MainWindow extends JFrame {
         } catch (CycleFoundException e) {
             Utils.showErrorMessageAndExit("Ребро \"" + e.getFrom() + "\"->\"" + e.getTo() + "\" создает цикл");
         }
+        fileDialog = new FileDialog(this, "Выберите файл", FileDialog.SAVE);
+
         mxGraphWrapper = new MxGraphWrapper(rawGraph);
         mxGraphComponent graphComponent = mxGraphWrapper.getGraphComponent();
         graphComponent.setEnabled(true);
         graphComponent.setConnectable(false);
         graphComponent.setWheelScrollingEnabled(true);
         graphComponent.getGraphHandler().setMarkerEnabled(true);
-
         graphComponent.getGraphControl().addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
                 onMove(e, graphComponent);
             }
         });
-
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -85,20 +85,22 @@ public class MainWindow extends JFrame {
         });
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(graphComponent, BorderLayout.CENTER);
-        JButton exportResutButton = new JButton("Экспортировать");
-        exportResutButton.setVisible(true);
-        exportResutButton.addActionListener(event -> {
+        JButton exportResultButton = new JButton("Сохранить выбор...");
+        exportResultButton.setVisible(true);
+        exportResultButton.addActionListener(event -> {
             List<String> selectedCourses = mxGraphWrapper.getSelectedCourses();
+            fileDialog.setVisible(true);
             try {
-                Files.write(Paths.get("selectedCourses.txt"), selectedCourses, StandardOpenOption.CREATE);
-                Utils.showInfoMessage("Выбранные курсы успешно записаны в файл selectedCources.txt");
+                String filename = fileDialog.getFile();
+                Files.write(Paths.get(filename), selectedCourses, StandardOpenOption.CREATE);
+                Utils.showInfoMessage("Выбранные курсы успешно записаны в файл " + filename);
             } catch (IOException e) {
                 Utils.showErrorMessage("Ошибка записи");
             }
         });
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout());
-        panel.add(exportResutButton);
+        panel.add(exportResultButton);
         getContentPane().setLayout(new FlowLayout(FlowLayout.LEADING));
         getContentPane().add(panel);
     }
@@ -109,7 +111,7 @@ public class MainWindow extends JFrame {
             if (!clickedVertex.isChoosen()) {
                 mxGraphWrapper.selectAllParents(clickedVertex);
             } else {
-                mxGraphWrapper.disselectAllChilds(clickedVertex);
+                mxGraphWrapper.disselectAllChildren(clickedVertex);
             }
         });
     }
@@ -118,9 +120,9 @@ public class MainWindow extends JFrame {
         Optional<CourseVertex> target = Utils.getCourseVertexFromEvent(e, graphComponent);
         if (target.isPresent() && !mxGraphWrapper.hasOpaqueVertices()) {
             long currentTime = System.currentTimeMillis();
-            if (lastActionMillis + 200 < currentTime) {
+            if (lastActionMillis + 100 < currentTime) {
                 lastActionMillis = currentTime;
-                mxGraphWrapper.highlightAllChilds(target.get());
+                mxGraphWrapper.highlightAllChildren(target.get());
             }
         }
         if (!target.isPresent() && mxGraphWrapper.hasOpaqueVertices()) {
