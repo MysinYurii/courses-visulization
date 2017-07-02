@@ -21,9 +21,6 @@ import java.util.stream.Collectors;
 
 import static java.lang.Boolean.TRUE;
 
-/**
- * Created by Yury on 21.03.2017.
- */
 public class MxGraphWrapper {
 
     private static final int VERTEX_WIDTH = 200;

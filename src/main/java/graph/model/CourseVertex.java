@@ -4,10 +4,6 @@ import com.google.common.base.Objects;
 
 import java.io.Serializable;
 
-/**
- * Created by Yury on 04.12.2016.
- */
-
 public class CourseVertex implements Serializable {
     private final String courseName;
     private boolean isChoosen;

@@ -7,9 +7,6 @@ import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-/**
- * Created by Yury on 01.07.2017.
- */
 public class LevelsProgressText extends JTextArea {
 
     private final int levelNumber;

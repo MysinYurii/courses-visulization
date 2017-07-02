@@ -5,9 +5,6 @@ import graph.Utils;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Created by Yury on 12.03.2017.
- */
 public class Main {
 
 
