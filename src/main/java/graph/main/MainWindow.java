@@ -1,5 +1,7 @@
 package graph.main;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.mxgraph.swing.mxGraphComponent;
 import exceptions.CycleFoundException;
 import exceptions.VertexDuplicationException;
@@ -7,6 +9,7 @@ import exceptions.VertexIdUndefinedException;
 import graph.*;
 import graph.model.CourseEdge;
 import graph.model.CourseVertex;
+import graph.model.LevelsProgressText;
 import graph.model.MxGraphWrapper;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
@@ -21,6 +24,8 @@ import java.util.*;
 import java.util.List;
 
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 
 /**
  * Created by Yury on 05.12.2016.
@@ -30,6 +35,7 @@ public class MainWindow extends JFrame {
     private final FileDialog fileDialog;
     private final MxGraphWrapper mxGraphWrapper;
     private long lastActionMillis = -1;
+    private final Map<Integer, LevelsProgressText> textPanesByCourseLevel = new HashMap<>();
 
     public MainWindow() throws IOException {
         GraphProvider graphProvider = new FileGraphProviderImpl("courseGraph");
@@ -83,8 +89,7 @@ public class MainWindow extends JFrame {
                 mxGraphWrapper.revertPreviousAction();
             }
         });
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(graphComponent, BorderLayout.CENTER);
+        getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         JButton exportResultButton = new JButton("Сохранить выбор...");
         exportResultButton.setVisible(true);
         exportResultButton.addActionListener(event -> {
@@ -99,21 +104,41 @@ public class MainWindow extends JFrame {
             }
         });
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout());
-        panel.add(exportResultButton);
-        getContentPane().setLayout(new FlowLayout(FlowLayout.LEADING));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(exportResultButton);
+        List<Integer> tempList = Lists.newArrayList(0,0,12,3,0,0,0);
+        for (int i = 1; i <= 5; ++i) {
+            LevelsProgressText textArea = new LevelsProgressText(i, mxGraphWrapper::highlightVerticesWithCourseLevel,
+                    mxGraphWrapper::removeOpaqueVertices, tempList.get(i));
+            textPanesByCourseLevel.put(i, textArea);
+            buttonPanel.add(Box.createHorizontalStrut(20));
+            buttonPanel.add(textArea);
+        }
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(buttonPanel);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(graphComponent);
+        graphComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
+        graphComponent.setAlignmentY(TOP_ALIGNMENT);
+        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        buttonPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
         getContentPane().add(panel);
     }
 
     private void onLeftClick(MouseEvent e, mxGraphComponent graphComponent) {
         Optional<CourseVertex> target = Utils.getCourseVertexFromEvent(e, graphComponent);
-        target.ifPresent(clickedVertex -> {
+        Map<Integer, Integer> changeOfCoursesByLevel = ImmutableMap.of();
+        if (target.isPresent()) {
+            CourseVertex clickedVertex = target.get();
             if (!clickedVertex.isChoosen()) {
-                mxGraphWrapper.selectAllParents(clickedVertex);
+                changeOfCoursesByLevel = mxGraphWrapper.selectAllParents(clickedVertex);
             } else {
-                mxGraphWrapper.disselectAllChildren(clickedVertex);
+                changeOfCoursesByLevel = mxGraphWrapper.disselectAllChildren(clickedVertex);
             }
-        });
+        }
+        changeOfCoursesByLevel.forEach((key, value) -> textPanesByCourseLevel.get(key).addCourses(value));
     }
 
     private void onMove(MouseEvent e, mxGraphComponent graphComponent) {

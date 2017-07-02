@@ -1,14 +1,15 @@
 package graph.model;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.*;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
-import com.sun.istack.internal.Nullable;
 import graph.Utils;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
@@ -30,6 +31,7 @@ public class MxGraphWrapper {
 
     private static final String STYLE_NAME = "MyStyle";
     private final Map<CourseVertex, mxCell> mxCellsByCourseVertices = new HashMap<>();
+    private final Multimap<Integer, mxCell> mxCellByCourseLevel = HashMultimap.create();
     private DirectedAcyclicGraph<CourseVertex, CourseEdge> rawGraph;
     private Stack<List<CourseVertex>> changesHistory;
     private mxGraphComponent graphComponent = null;
@@ -48,7 +50,7 @@ public class MxGraphWrapper {
     public mxGraphComponent getGraphComponent() {
         if (graphComponent == null) {
             graphComponent = new mxGraphComponent(graph);
-            graphComponent.setSize(1000, 1000);
+            graphComponent.setSize(1000, 1200);
         }
         return graphComponent;
     }
@@ -111,6 +113,7 @@ public class MxGraphWrapper {
         mxCell cell = (mxCell) graph.insertVertex(graph.getDefaultParent(), null, courseVertex,
                 0, 0, VERTEX_WIDTH, VERTEX_HEIGHT, STYLE_NAME);
         mxCellsByCourseVertices.put(courseVertex, cell);
+        mxCellByCourseLevel.put(courseVertex.getCourseLevel(), cell);
     }
 
     private void insertEdge(CourseEdge edge) {
@@ -120,18 +123,23 @@ public class MxGraphWrapper {
                 mxCellsByCourseVertices.get(vertexFrom), mxCellsByCourseVertices.get(vertexTo));
     }
 
-    public void disselectAllChildren(CourseVertex vertex) {
-        updateGraph(vertex, true, false, null);
+    public Map<Integer, Integer> disselectAllChildren(CourseVertex vertex) {
+        return updateGraph(vertex, true, false, null);
     }
 
-    public void selectAllParents(CourseVertex vertex) {
-        updateGraph(vertex, false, true, null);
+    public Map<Integer, Integer> selectAllParents(CourseVertex vertex) {
+         return updateGraph(vertex, false, true, null);
     }
 
     public void highlightAllChildren(CourseVertex vertex) {
         setOpacityForCells(10);
         updateGraph(vertex, false, null, true);
         updateGraph(vertex, true, null, true);
+    }
+
+    public void highlightVerticesWithCourseLevel(int courseLevel) {
+        setOpacityForCells(10);
+        setOpacityForCells(100, mxCellByCourseLevel.get(courseLevel).toArray());
     }
 
     public void revertPreviousAction() {
@@ -144,13 +152,11 @@ public class MxGraphWrapper {
         }
     }
 
-    private void updateGraph(CourseVertex root, boolean workWithChildren, @Nullable Boolean desiredValue, Boolean makeOpaque) {
+    private Map<Integer, Integer> updateGraph(CourseVertex root, boolean workWithChildren, Boolean desiredValue, Boolean makeOpaque) {
         Queue<CourseVertex> disselectedChildren = new LinkedList<>();
         List<CourseVertex> changedVertices = new ArrayList<>();
-        root.switchChoise();
-        if (desiredValue != null) {
-            changedVertices.add(root);
-        }
+        Map<Integer, Integer> result = new HashMap<>();
+        int courseCountIncrement = Boolean.TRUE.equals(desiredValue) ? 1 : Boolean.FALSE.equals(desiredValue) ? -1 : 0;
         disselectedChildren.add(root);
         while (!disselectedChildren.isEmpty()) {
             CourseVertex updatedVertex = disselectedChildren.remove();
@@ -158,6 +164,7 @@ public class MxGraphWrapper {
                 if (updatedVertex.isChoosen() != desiredValue) {
                     changedVertices.add(updatedVertex);
                     updatedVertex.setIsChoosen(desiredValue);
+                    result.put(updatedVertex.getCourseLevel(), result.getOrDefault(updatedVertex.getCourseLevel(), 0) + courseCountIncrement);
                 }
                 repaintVertex(updatedVertex);
             }
@@ -174,6 +181,7 @@ public class MxGraphWrapper {
         if (!changedVertices.isEmpty()) {
             changesHistory.push(changedVertices);
         }
+        return result;
     }
 
     private void repaintVertex(CourseVertex repaintedVertex) {
@@ -183,12 +191,14 @@ public class MxGraphWrapper {
 
     private void highlightVertex(CourseVertex repaintedVertex, boolean workWithChildren) {
         mxCell repaintedMxCell = mxCellsByCourseVertices.get(repaintedVertex);
-        setOpacityForCells(100, new Object[]{repaintedMxCell});
-        for (int i = 0; i < repaintedMxCell.getEdgeCount(); ++i) {
-            mxCell edge = (mxCell) repaintedMxCell.getEdgeAt(i);
-            if (( workWithChildren && repaintedMxCell.equals(edge.getSource()) )
-                    || ( !workWithChildren && repaintedMxCell.equals(edge.getTarget()) ))
-                setOpacityForCells(100, new Object[] {edge});
+        if (repaintedMxCell != null) {
+            setOpacityForCells(100, new Object[]{repaintedMxCell});
+            for (int i = 0; i < repaintedMxCell.getEdgeCount(); ++i) {
+                mxCell edge = (mxCell) repaintedMxCell.getEdgeAt(i);
+                if ((workWithChildren && repaintedMxCell.equals(edge.getSource()))
+                        || (!workWithChildren && repaintedMxCell.equals(edge.getTarget())))
+                    setOpacityForCells(100, new Object[]{edge});
+            }
         }
     }
 

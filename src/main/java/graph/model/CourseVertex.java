@@ -7,13 +7,20 @@ import java.io.Serializable;
 /**
  * Created by Yury on 04.12.2016.
  */
+
 public class CourseVertex implements Serializable {
     private final String courseName;
     private boolean isChoosen;
+    private final int courseLevel;
 
-    public CourseVertex(String courseName) {
+    public CourseVertex(String courseName, int courseLevel) {
         this.courseName = courseName;
+        this.courseLevel = courseLevel;
         isChoosen = false;
+    }
+
+    public int getCourseLevel() {
+        return courseLevel;
     }
 
     public boolean isChoosen() {
@@ -22,19 +29,6 @@ public class CourseVertex implements Serializable {
 
     public void switchChoise() {
         isChoosen = !isChoosen;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CourseVertex that = (CourseVertex) o;
-        return Objects.equal(courseName, that.courseName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(courseName);
     }
 
     public void setIsChoosen(boolean isChoosen) {
@@ -48,6 +42,20 @@ public class CourseVertex implements Serializable {
     @Override
     public String toString() {
         return courseName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CourseVertex that = (CourseVertex) o;
+        return courseLevel == that.courseLevel &&
+                Objects.equal(courseName, that.courseName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(courseName, courseLevel);
     }
 
 }

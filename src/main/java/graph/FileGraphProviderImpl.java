@@ -49,13 +49,12 @@ public class FileGraphProviderImpl implements GraphProvider {
         for (String fileLine : fileLines) {
             fileLine = fileLine.trim();
             if (vertexDescriptionFormat.matcher(fileLine).matches()) {
-                Pair<Integer, String> vertexAddition = parseVertexAdditionLine(fileLine);
+                Pair<Integer, CourseVertex> vertexAddition = parseVertexAdditionLine(fileLine);
                 Integer id = vertexAddition.getKey();
-                CourseVertex newCourseVertex = new CourseVertex(vertexAddition.getValue());
-                if (vertexDesriptions.putIfAbsent(id, newCourseVertex) != null) {
+                if (vertexDesriptions.putIfAbsent(id, vertexAddition.getValue()) != null) {
                     throw new VertexDuplicationException(id);
                 }
-                result.addVertex(newCourseVertex);
+                result.addVertex(vertexAddition.getValue());
             } else if (edgesDescriptionFormat.matcher(fileLine).matches()) {
                 Pair<Integer, List<Integer>> edgesAddition = parseEdgesAdditionLine(fileLine);
                 Integer toId = edgesAddition.getKey();
@@ -87,10 +86,11 @@ public class FileGraphProviderImpl implements GraphProvider {
         return result;
     }
 
-    private Pair<Integer, String> parseVertexAdditionLine(String line) {
+    private Pair<Integer, CourseVertex> parseVertexAdditionLine(String line) {
         String[] tokens = line.split(";");
         Integer id = Integer.valueOf(tokens[0]);
-        return new Pair<>(id, tokens[1]);
+        Integer courseLevel = Integer.valueOf(tokens[2]);
+        return new Pair<>(id, new CourseVertex(tokens[1], courseLevel));
     }
 
     private Pair<Integer, List<Integer>> parseEdgesAdditionLine(String line) {
