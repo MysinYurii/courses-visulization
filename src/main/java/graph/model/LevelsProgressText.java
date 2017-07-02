@@ -47,7 +47,7 @@ public class LevelsProgressText extends JTextArea {
         if (hasMinimumNumberOfCourses()) {
             setBackground(Color.GREEN);
         } else {
-            setBackground(Color.RED);
+            setBackground(new Color(255, 101, 88));
         }
     }
 
@@ -65,5 +65,15 @@ public class LevelsProgressText extends JTextArea {
         this.coursesSelected -= coursesNum;
         this.refreshText();
     }
+
+    public int getSelectedCoursesCount() {
+        return coursesSelected;
+    }
+
+    public void setCoursesSelectedCount(int coursesSelected) {
+        this.coursesSelected = coursesSelected;
+        refreshText();
+    }
+
 
 }

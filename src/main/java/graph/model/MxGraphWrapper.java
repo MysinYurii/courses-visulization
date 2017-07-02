@@ -7,7 +7,8 @@ import com.google.common.collect.Multimap;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.*;
+import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import graph.Utils;
@@ -17,6 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 import static java.lang.Boolean.TRUE;
@@ -70,6 +72,7 @@ public class MxGraphWrapper {
         style.put(mxConstants.STYLE_CLONEABLE, false);
         style.put(mxConstants.STYLE_BENDABLE, false);
         style.put(mxConstants.STYLE_STROKEWIDTH, 1.5);
+        style.put(mxConstants.STYLE_FONTSIZE, 12.0F);
         style.put(mxConstants.STYLE_FILLCOLOR, mxUtils.getHexColorString(new Color(255, 255, 255)));
         style.put(mxConstants.STYLE_STROKECOLOR, mxUtils.getHexColorString(new Color(253, 146, 37)));
 
@@ -147,6 +150,16 @@ public class MxGraphWrapper {
                 repaintVertex(changedVertex);
             }
         }
+    }
+
+    public Map<Integer, Integer> getCourseLevelStats() {
+        HashMap<Integer, Integer> result = new HashMap<>();
+        mxCellsByCourseVertices.forEach((key, value) -> {
+            if (key.isChoosen()) {
+                result.put(key.getCourseLevel(), result.getOrDefault(key.getCourseLevel(), 0) + 1);
+            }
+        });
+        return result;
     }
 
     private Map<Integer, Integer> updateGraph(CourseVertex root, boolean workWithChildren, Boolean desiredValue, Boolean makeOpaque) {

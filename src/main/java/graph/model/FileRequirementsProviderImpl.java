@@ -45,6 +45,6 @@ public class FileRequirementsProviderImpl implements RequirementsProvider {
 
     @Override
     public Map<String, ? extends Map<Integer, Integer>> getRequirements() {
-        return null;
+        return requirements;
     }
 }

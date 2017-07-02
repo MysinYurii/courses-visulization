@@ -1,16 +1,14 @@
 package graph.main;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.mxgraph.swing.mxGraphComponent;
 import exceptions.CycleFoundException;
 import exceptions.VertexDuplicationException;
 import exceptions.VertexIdUndefinedException;
-import graph.*;
-import graph.model.CourseEdge;
-import graph.model.CourseVertex;
-import graph.model.LevelsProgressText;
-import graph.model.MxGraphWrapper;
+import graph.FileGraphProviderImpl;
+import graph.GraphProvider;
+import graph.Utils;
+import graph.model.*;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 
 import javax.swing.*;
@@ -20,14 +18,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 
-/**
- * Created by Yury on 05.12.2016.
- */
 public class MainWindow extends JFrame {
 
     private final FileDialog fileDialog;
@@ -45,6 +42,7 @@ public class MainWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mxGraphWrapper.revertPreviousAction();
+                refreshCourseLevelProgress();
             }
         });
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -65,14 +63,20 @@ public class MainWindow extends JFrame {
             }
         });
         buttonPanel.add(exportResultButton);
-        List<Integer> tempList = Lists.newArrayList(0,0,12,3,0,0,0);
-        for (int i = 1; i <= 5; ++i) {
-            LevelsProgressText textArea = new LevelsProgressText(i, mxGraphWrapper::highlightVerticesWithCourseLevel,
-                    mxGraphWrapper::removeOpaqueVertices, tempList.get(i));
-            textPanesByCourseLevel.put(i, textArea);
-            buttonPanel.add(Box.createHorizontalStrut(20));
-            buttonPanel.add(textArea);
-        }
+        RequirementsProvider requirementsProvider = new FileRequirementsProviderImpl();
+        Map<String, ? extends Map<Integer, Integer>> req = requirementsProvider.getRequirements();
+        String firstKey = req.keySet().iterator().next();
+        addRestrictionsInfo(buttonPanel, req.get(firstKey));
+        JComboBox<String> comboBox = new JComboBox<>(req.keySet().toArray(new String[0]));
+        buttonPanel.add(Box.createHorizontalStrut(20));
+        buttonPanel.add(comboBox);
+        comboBox.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                String selected = (String) e.getItem();
+                Map<Integer, Integer> restrictions = req.get(selected);
+                updateRestrictions(restrictions);
+            }
+        });
         buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         buttonPanel.setAlignmentY(Component.TOP_ALIGNMENT);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -81,6 +85,16 @@ public class MainWindow extends JFrame {
         panel.add(graphComponent);
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
         getContentPane().add(panel);
+    }
+
+    private void refreshCourseLevelProgress() {
+        Map<Integer, Integer> stats = mxGraphWrapper.getCourseLevelStats();
+        stats.forEach((key, value) -> {
+            LevelsProgressText text = textPanesByCourseLevel.get(key);
+            if (text != null) {
+                text.setCoursesSelectedCount(value);
+            }
+        });
     }
 
     private void onLeftClick(MouseEvent e, mxGraphComponent graphComponent) {
@@ -94,7 +108,7 @@ public class MainWindow extends JFrame {
                 changeOfCoursesByLevel = mxGraphWrapper.disselectAllChildren(clickedVertex);
             }
         }
-        changeOfCoursesByLevel.forEach((key, value) -> textPanesByCourseLevel.get(key).addCourses(value));
+        refreshCourseLevelProgress();
     }
 
     private void onMove(MouseEvent e, mxGraphComponent graphComponent) {
@@ -160,6 +174,32 @@ public class MainWindow extends JFrame {
         graphComponent.setSize(new Dimension(750, 750));
         graphComponent.setBorder(null);
         return graphComponent;
+    }
+
+    private void addRestrictionsInfo(JPanel panel, Map<Integer, Integer> restrictions) {
+        Map<Integer, Integer> courseLevelStats = mxGraphWrapper.getCourseLevelStats();
+        JTextArea helpTextArea = new JTextArea("Статистика по количеству выбранных курсов");
+        helpTextArea.setFont(helpTextArea.getFont().deriveFont(LevelsProgressText.getFontSize()));
+        helpTextArea.setOpaque(false);
+        helpTextArea.setEditable(false);
+        panel.add(helpTextArea);
+        panel.add(Box.createHorizontalStrut(20));
+        restrictions.forEach((key, value) -> {
+            LevelsProgressText textArea = new LevelsProgressText(key, mxGraphWrapper::highlightVerticesWithCourseLevel,
+                    mxGraphWrapper::removeOpaqueVertices, value);
+            textPanesByCourseLevel.put(key, textArea);
+            panel.add(Box.createHorizontalStrut(20));
+            panel.add(textArea);
+        });
+    }
+
+    private void updateRestrictions(Map<Integer, Integer> restrictions) {
+        restrictions.forEach((key, value) -> {
+            LevelsProgressText text = textPanesByCourseLevel.get(key);
+            if (text != null) {
+                text.setCoursesRequired(value);
+            }
+        });
     }
 
 }
