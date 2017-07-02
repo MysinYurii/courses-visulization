@@ -24,8 +24,6 @@ import java.util.*;
 import java.util.List;
 
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
-import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
-import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 
 /**
  * Created by Yury on 05.12.2016.
@@ -38,49 +36,9 @@ public class MainWindow extends JFrame {
     private final Map<Integer, LevelsProgressText> textPanesByCourseLevel = new HashMap<>();
 
     public MainWindow() throws IOException {
-        GraphProvider graphProvider = new FileGraphProviderImpl("courseGraph");
-        DirectedAcyclicGraph<CourseVertex, CourseEdge> rawGraph = null;
-        try {
-            rawGraph = graphProvider.getGraph();
-        } catch (IOException e) {
-            Utils.showErrorMessageAndExit("Файл с графом курсов не найден");
-        } catch (VertexDuplicationException e) {
-            Utils.showErrorMessageAndExit("Дупликация вершины с id = " + e.getDuplicatedId());
-        } catch (VertexIdUndefinedException e) {
-            Utils.showErrorMessageAndExit("Не найдено вершины с id = " + e.getId());
-        } catch (CycleFoundException e) {
-            Utils.showErrorMessageAndExit("Ребро \"" + e.getFrom() + "\"->\"" + e.getTo() + "\" создает цикл");
-        }
+        mxGraphWrapper = getGraphWrapper();
+        mxGraphComponent graphComponent = initGraphComponent();
         fileDialog = new FileDialog(this, "Выберите файл", FileDialog.SAVE);
-
-        mxGraphWrapper = new MxGraphWrapper(rawGraph);
-        mxGraphComponent graphComponent = mxGraphWrapper.getGraphComponent();
-        graphComponent.setEnabled(true);
-        graphComponent.setConnectable(false);
-        graphComponent.setWheelScrollingEnabled(true);
-        graphComponent.getGraphHandler().setMarkerEnabled(true);
-        graphComponent.getGraphControl().addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                onMove(e, graphComponent);
-            }
-        });
-        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    onLeftClick(e, graphComponent);
-                }
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                onMove(e, graphComponent);
-            }
-        });
-        graphComponent.setSize(new Dimension(750, 750));
-        graphComponent.setBorder(null);
         ((JComponent)getComponent(0)).getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_MASK),
                 "revertLastAction");
         ((JComponent)getComponent(0)).getActionMap().put("revertLastAction", new AbstractAction() {
@@ -90,6 +48,9 @@ public class MainWindow extends JFrame {
             }
         });
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        JPanel panel = new JPanel();
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         JButton exportResultButton = new JButton("Сохранить выбор...");
         exportResultButton.setVisible(true);
         exportResultButton.addActionListener(event -> {
@@ -103,9 +64,6 @@ public class MainWindow extends JFrame {
                 Utils.showErrorMessage("Ошибка записи");
             }
         });
-        JPanel panel = new JPanel();
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.add(exportResultButton);
         List<Integer> tempList = Lists.newArrayList(0,0,12,3,0,0,0);
         for (int i = 1; i <= 5; ++i) {
@@ -115,14 +73,12 @@ public class MainWindow extends JFrame {
             buttonPanel.add(Box.createHorizontalStrut(20));
             buttonPanel.add(textArea);
         }
+        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        buttonPanel.setAlignmentY(Component.TOP_ALIGNMENT);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(buttonPanel);
         panel.add(Box.createVerticalStrut(5));
         panel.add(graphComponent);
-        graphComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
-        graphComponent.setAlignmentY(TOP_ALIGNMENT);
-        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        buttonPanel.setAlignmentY(Component.TOP_ALIGNMENT);
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
         getContentPane().add(panel);
     }
@@ -155,5 +111,55 @@ public class MainWindow extends JFrame {
         }
     }
 
+    private MxGraphWrapper getGraphWrapper() {
+        GraphProvider graphProvider = new FileGraphProviderImpl("courseGraph");
+        DirectedAcyclicGraph<CourseVertex, CourseEdge> rawGraph = null;
+        try {
+            rawGraph = graphProvider.getGraph();
+        } catch (IOException e) {
+            Utils.showErrorMessageAndExit("Файл с графом курсов не найден");
+        } catch (VertexDuplicationException e) {
+            Utils.showErrorMessageAndExit("Дупликация вершины с id = " + e.getDuplicatedId());
+        } catch (VertexIdUndefinedException e) {
+            Utils.showErrorMessageAndExit("Не найдено вершины с id = " + e.getId());
+        } catch (CycleFoundException e) {
+            Utils.showErrorMessageAndExit("Ребро \"" + e.getFrom() + "\"->\"" + e.getTo() + "\" создает цикл");
+        }
+
+        return new MxGraphWrapper(rawGraph);
+    }
+
+    private mxGraphComponent initGraphComponent() {
+        mxGraphComponent graphComponent = mxGraphWrapper.getGraphComponent();
+        graphComponent.setEnabled(true);
+        graphComponent.setConnectable(false);
+        graphComponent.setWheelScrollingEnabled(true);
+        graphComponent.getGraphHandler().setMarkerEnabled(true);
+        graphComponent.getGraphControl().addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                onMove(e, graphComponent);
+            }
+        });
+        graphComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
+        graphComponent.setAlignmentY(TOP_ALIGNMENT);
+        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    onLeftClick(e, graphComponent);
+                }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                onMove(e, graphComponent);
+            }
+        });
+        graphComponent.setSize(new Dimension(750, 750));
+        graphComponent.setBorder(null);
+        return graphComponent;
+    }
 
 }

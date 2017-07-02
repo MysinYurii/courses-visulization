@@ -13,6 +13,7 @@ import java.util.function.Function;
 public class LevelsProgressText extends JTextArea {
 
     private final int levelNumber;
+    private static final float fontSize = 20.0F;
     private int coursesSelected = 0;
     private int coursesRequired = 10;
 
@@ -21,7 +22,7 @@ public class LevelsProgressText extends JTextArea {
         this.levelNumber = levelNumber;
         this.coursesRequired = coursesRequired;
         setEditable(false);
-        setFont(getFont().deriveFont(20.0F));
+        setFont(getFont().deriveFont(fontSize));
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -34,6 +35,10 @@ public class LevelsProgressText extends JTextArea {
             }
         });
         refreshText();
+    }
+
+    public static float getFontSize() {
+        return fontSize;
     }
 
     public boolean hasMinimumNumberOfCourses() {
