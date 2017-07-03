@@ -103,7 +103,7 @@ public class MxGraphWrapper {
         mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
         layout.setUseBoundingBox(true);
         layout.setInterHierarchySpacing(15.0);
-        layout.setIntraCellSpacing(10.0);
+        layout.setIntraCellSpacing(7.0);
         layout.setInterRankCellSpacing(50.0);
         layout.setOrientation(SwingConstants.WEST);
         layout.execute(graph.getDefaultParent());

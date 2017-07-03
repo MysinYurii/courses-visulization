@@ -47,7 +47,9 @@ public class MainWindow extends JFrame {
         });
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         JPanel panel = new JPanel();
+        JPanel infoPanel = new JPanel();
         JPanel buttonPanel = new JPanel();
+        infoPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         JButton exportResultButton = new JButton("Сохранить выбор...");
         exportResultButton.setVisible(true);
@@ -66,10 +68,11 @@ public class MainWindow extends JFrame {
         RequirementsProvider requirementsProvider = new FileRequirementsProviderImpl();
         Map<String, ? extends Map<Integer, Integer>> req = requirementsProvider.getRequirements();
         String firstKey = req.keySet().iterator().next();
-        addRestrictionsInfo(buttonPanel, req.get(firstKey));
+        addRestrictionsInfo(infoPanel, req.get(firstKey));
         JComboBox<String> comboBox = new JComboBox<>(req.keySet().toArray(new String[0]));
-        buttonPanel.add(Box.createHorizontalStrut(20));
-        buttonPanel.add(comboBox);
+        comboBox.setFont(comboBox.getFont().deriveFont(LevelsProgressText.getFontSize()));
+        infoPanel.add(Box.createHorizontalStrut(20));
+        infoPanel.add(comboBox);
         comboBox.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 String selected = (String) e.getItem();
@@ -77,12 +80,14 @@ public class MainWindow extends JFrame {
                 updateRestrictions(restrictions);
             }
         });
-        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        infoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        infoPanel.setAlignmentY(Component.TOP_ALIGNMENT);
         buttonPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(buttonPanel);
-        panel.add(Box.createVerticalStrut(5));
+        panel.add(infoPanel);
         panel.add(graphComponent);
+        panel.add(buttonPanel);
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
         getContentPane().add(panel);
     }
@@ -178,7 +183,7 @@ public class MainWindow extends JFrame {
 
     private void addRestrictionsInfo(JPanel panel, Map<Integer, Integer> restrictions) {
         Map<Integer, Integer> courseLevelStats = mxGraphWrapper.getCourseLevelStats();
-        JTextArea helpTextArea = new JTextArea("Статистика по количеству выбранных курсов");
+        JTextArea helpTextArea = new JTextArea("Статистика по количеству выбранных курсов:");
         helpTextArea.setFont(helpTextArea.getFont().deriveFont(LevelsProgressText.getFontSize()));
         helpTextArea.setOpaque(false);
         helpTextArea.setEditable(false);
